@@ -3,60 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MK World Tournament</title>
+  <title>Fleet MK Tournament</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0f172a;
-      --surf:     #1e293b;
-      --surf2:    #263347;
-      --border:   rgba(255,255,255,0.08);
-      --border2:  rgba(255,255,255,0.16);
-      --text:     #f1f5f9;
-      --muted:    #94a3b8;
-      --faint:    #475569;
-      --gold:     #f59e0b;
-      --gold-bg:  rgba(245,158,11,0.12);
-      --blue:     #3b82f6;
-      --blue-bg:  rgba(59,130,246,0.12);
-      --green:    #22c55e;
-      --green-bg: rgba(34,197,94,0.12);
-      --red:      #ef4444;
-      --red-bg:   rgba(239,68,68,0.12);
-      --amber:    #f59e0b;
-      --amber-bg: rgba(245,158,11,0.12);
+      --bg:       #F9FAFC;
+      --surf:     #FFFFFF;
+      --surf2:    #F4F5F8;
+      --border:   #E2E4EA;
+      --border2:  #C5C7D1;
+      --text:     #192147;
+      --muted:    #515774;
+      --faint:    #8b8fa2;
+      --gold:     #6A67FE;
+      --gold-bg:  rgba(106,103,254,0.08);
+      --blue:     #6A67FE;
+      --blue-bg:  rgba(106,103,254,0.08);
+      --green:    #009A7D;
+      --green-bg: rgba(0,154,125,0.1);
+      --red:      #FF5C83;
+      --red-bg:   rgba(255,92,131,0.1);
+      --amber:    #14acc2;
+      --amber-bg: rgba(20,172,194,0.1);
       --r:        8px;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ── Layout ── */
     .topbar {
       position: sticky; top: 0; z-index: 10;
-      background: var(--surf);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
+      background: #192147;
+      border-bottom: none;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.14);
+      padding: 0 20px;
       display: flex; align-items: center; justify-content: space-between;
+      height: 54px;
     }
-    .topbar-title { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
-    .topbar-phase { font-size: 12px; color: var(--muted); }
-    .wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 40px; }
+    .topbar-title { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); }
+    .topbar-phase { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; color: rgba(255,255,255,0.38); text-transform: uppercase; font-family: 'Roboto Mono','Courier New',monospace; }
+    .topbar-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.13); color: rgba(255,255,255,0.68); font-size: 11px; padding: 5px 11px; }
+    .topbar-btn:hover:not(:disabled) { background: rgba(255,255,255,0.14); opacity: 1; }
+    .topbar-btn-primary { background: #6A67FE; border: 1px solid #6A67FE; color: #fff; font-size: 11px; padding: 5px 11px; }
+    .topbar-btn-primary:hover:not(:disabled) { opacity: .84; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 20px 16px 48px; }
 
     /* ── Cards ── */
     .card {
       background: var(--surf); border: 1px solid var(--border);
-      border-radius: 12px; padding: 16px; margin-bottom: 12px;
+      border-radius: 12px; padding: 18px 20px; margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(25,33,71,0.06);
     }
     .card-label {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
-      color: var(--muted); text-transform: uppercase; margin-bottom: 12px;
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 14px;
+      font-family: 'Roboto Mono','Courier New',monospace;
     }
 
     /* ── Buttons ── */
@@ -72,10 +81,10 @@
     .btn:hover:not(:disabled) { opacity: .8; }
     .btn:active:not(:disabled) { opacity: .65; }
     .btn:disabled { opacity: .35; cursor: not-allowed; }
-    .btn-gold  { background: var(--gold);  color: #000; border-color: var(--gold); }
-    .btn-ghost { background: transparent; }
-    .btn-sm    { padding: 5px 12px; font-size: 13px; }
-    .btn-block { width: 100%; }
+    .btn-gold  { background: #009A7D; color: #fff; border-color: #009A7D; }
+    .btn-ghost { background: transparent; border-color: var(--border); }
+    .btn-sm    { padding: 5px 12px; font-size: 12px; }
+    .btn-block { width: 100%; padding: 11px 18px; font-size: 15px; justify-content: center; }
     .btn-danger { color: var(--red); border-color: rgba(239,68,68,.3); background: var(--red-bg); }
 
     /* ── Form ── */
@@ -85,7 +94,7 @@
       background: var(--surf2); color: var(--text);
       font-size: 15px; font-family: inherit; outline: none;
     }
-    input[type=text]:focus { border-color: var(--gold); }
+    input[type=text]:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(106,103,254,0.14); }
     input[type=text]::placeholder { color: var(--faint); }
 
     .seg {
@@ -99,12 +108,13 @@
       font-size: 13px; font-weight: 500;
     }
     .seg-btn:last-child { border-right: none; }
-    .seg-btn.on { background: var(--gold); color: #000; }
+    .seg-btn.on { background: var(--gold); color: #fff; font-weight: 700; }
 
     /* ── Skill badges ── */
     .badge {
-      display: inline-block; padding: 2px 7px; border-radius: 20px;
-      font-size: 11px; font-weight: 600;
+      display: inline-block; padding: 1px 7px; border-radius: 20px;
+      font-size: 10px; font-weight: 700;
+      font-family: 'Roboto Mono','Courier New',monospace; letter-spacing: 0.3px;
     }
     .badge-beginner     { background: var(--green-bg); color: var(--green); }
     .badge-intermediate { background: var(--amber-bg); color: var(--amber); }
@@ -117,9 +127,9 @@
       border: 1px solid var(--border2); background: transparent;
       color: var(--muted); font-size: 13px; font-weight: 500;
     }
-    .skill-pick.on-beginner     { border-color: var(--green); background: var(--green-bg); color: var(--green); }
-    .skill-pick.on-intermediate { border-color: var(--amber); background: var(--amber-bg); color: var(--amber); }
-    .skill-pick.on-advanced     { border-color: var(--red);   background: var(--red-bg);   color: var(--red); }
+    .skill-pick.on-beginner     { border-color: var(--green); background: var(--green-bg); color: var(--green); font-weight: 700; }
+    .skill-pick.on-intermediate { border-color: var(--amber); background: var(--amber-bg); color: var(--amber); font-weight: 700; }
+    .skill-pick.on-advanced     { border-color: var(--red);   background: var(--red-bg);   color: var(--red);   font-weight: 700; }
 
     /* ── Player list (signup) ── */
     .prow {
@@ -127,7 +137,7 @@
       padding: 9px 0; border-bottom: 1px solid var(--border);
     }
     .prow:last-child { border-bottom: none; }
-    .prow-num { font-size: 12px; color: var(--faint); min-width: 22px; }
+    .prow-num { font-size: 11px; color: var(--faint); min-width: 22px; font-family: 'Roboto Mono',monospace; }
     .prow-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
     .prow-name { flex: 1; font-size: 14px; font-weight: 500; }
     .prow-del {
@@ -138,17 +148,19 @@
 
     /* ── Bracket round / heat cards ── */
     .round-label {
-      font-size: 11px; font-weight: 700; color: var(--faint);
-      text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px;
+      font-size: 10px; font-weight: 700; color: var(--faint);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+      font-family: 'Roboto Mono','Courier New',monospace;
     }
     .round-section { margin-bottom: 24px; }
 
     .heat-card {
       background: var(--surf); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 12px 14px; margin-bottom: 8px;
-      cursor: pointer; transition: border-color .15s;
+      border-radius: var(--r); padding: 14px 16px; margin-bottom: 8px;
+      cursor: pointer; transition: border-color .12s, box-shadow .12s;
+      box-shadow: 0 1px 2px rgba(25,33,71,0.04);
     }
-    .heat-card:hover:not(.no-click) { border-color: var(--gold); }
+    .heat-card:hover:not(.no-click) { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(106,103,254,0.1); }
     .heat-card.no-click { cursor: default; }
     .heat-card.done { opacity: .6; }
     .heat-card.locked { opacity: .4; cursor: default; }
@@ -167,10 +179,10 @@
     .chip {
       display: inline-flex; align-items: center; gap: 4px;
       font-size: 12px; padding: 3px 9px; border-radius: 20px;
-      border: 1px solid var(--border2); background: var(--surf2);
-      color: var(--text);
+      border: 1px solid var(--border); background: var(--surf2);
+      color: var(--muted);
     }
-    .chip.adv { border-color: var(--green); background: var(--green-bg); color: var(--green); font-weight: 600; }
+    .chip.adv { border-color: var(--green); background: var(--green-bg); color: var(--green); font-weight: 700; }
     .chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
     /* ── Heat racing view ── */
@@ -181,7 +193,7 @@
       color: var(--text); font-size: 14px; font-weight: 500;
       text-align: left; margin-bottom: 8px;
     }
-    .pick-btn:hover { border-color: var(--gold); background: var(--gold-bg); }
+    .pick-btn:hover { border-color: var(--gold); background: var(--gold-bg); box-shadow: 0 0 0 3px rgba(106,103,254,0.1); }
 
     .res-row {
       display: flex; align-items: center; gap: 8px;
@@ -189,13 +201,13 @@
       font-size: 14px;
     }
     .res-row:last-child { border-bottom: none; }
-    .res-pos { font-size: 12px; color: var(--muted); min-width: 28px; }
+    .res-pos { font-size: 11px; color: var(--muted); min-width: 28px; font-family: 'Roboto Mono',monospace; }
     .res-name { flex: 1; }
-    .res-pts { font-size: 13px; font-weight: 700; color: var(--gold); }
+    .res-pts { font-size: 13px; font-weight: 700; color: var(--gold); font-family: 'Roboto Mono',monospace; font-variant-numeric: tabular-nums; }
     .res-undo { background: none; border: none; color: var(--faint); font-size: 13px; padding: 2px 5px; }
     .res-undo:hover { color: var(--red); }
 
-    .adv-tag { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: .5px; }
+    .adv-tag { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: .5px; font-family: 'Roboto Mono',monospace; }
 
     /* ── Progress ── */
     .pbar { height: 3px; background: var(--surf2); border-radius: 2px; overflow: hidden; margin-bottom: 14px; }
@@ -209,7 +221,7 @@
     }
     .podium-medal { font-size: 22px; flex-shrink: 0; min-width: 30px; }
     .podium-name { flex: 1; font-size: 15px; font-weight: 600; }
-    .podium-pts { font-size: 15px; font-weight: 700; color: var(--gold); }
+    .podium-pts { font-size: 15px; font-weight: 700; color: var(--gold); font-family: 'Roboto Mono',monospace; font-variant-numeric: tabular-nums; }
 
     /* ── Misc ── */
     .gap { height: 14px; }
@@ -217,11 +229,11 @@
     .info-box {
       padding: 10px 13px; border-radius: var(--r);
       font-size: 13px; margin-bottom: 12px;
-      background: var(--blue-bg); color: #93c5fd;
-      border: 1px solid rgba(59,130,246,.25);
+      background: var(--blue-bg); color: #4a47c9;
+      border: 1px solid rgba(106,103,254,.18);
     }
-    .info-box.ok { background: var(--green-bg); color: #86efac; border-color: rgba(34,197,94,.25); }
-    .info-box.warn { background: var(--amber-bg); color: #fde68a; border-color: rgba(245,158,11,.25); }
+    .info-box.ok   { background: var(--green-bg); color: #00735d; border-color: rgba(0,154,125,.2); }
+    .info-box.warn { background: var(--red-bg);   color: #c93355; border-color: rgba(255,92,131,.2); }
     .empty { text-align: center; padding: 28px 0; color: var(--faint); font-size: 14px; }
     .row { display: flex; gap: 8px; align-items: center; }
     .flex1 { flex: 1; }
@@ -231,22 +243,21 @@
     .complete-check { font-size: 36px; display: block; text-align: center; margin: 12px 0 6px; }
     .complete-title { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 4px; }
     .complete-sub { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 16px; }
-    /* ── Display mode (index.html#display) ── */
+    /* ── Display mode — Fleet dark navy for projection screens ── */
+    body.dm { background: #192147; }
     body.dm .topbar { display: none !important; }
 
     .d-hdr {
       position: sticky; top: 0; z-index: 10;
-      background: var(--surf); border-bottom: 1px solid var(--border);
+      background: #0f1833;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
       padding: 14px 32px; display: flex; align-items: center; gap: 20px;
     }
-    .d-hdr-title  { font-size: 17px; font-weight: 800; }
-    .d-hdr-status { flex: 1; font-size: 15px; font-weight: 600; color: var(--gold); }
-    .d-live { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
-    .d-live-dot {
-      width: 7px; height: 7px; border-radius: 50%; background: var(--green);
-      animation: blink 1.8s ease-in-out infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+    .d-hdr-title  { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.45); }
+    .d-hdr-status { flex: 1; font-size: 15px; font-weight: 600; color: #14acc2; }
+    .d-live { display: flex; align-items: center; gap: 6px; font-size: 10px; color: rgba(255,255,255,0.28); font-family: 'Roboto Mono',monospace; text-transform: uppercase; letter-spacing: 0.6px; }
+    .d-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #009A7D; animation: blink 1.8s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.15} }
 
     .d-body { padding: 24px 32px 48px; max-width: 1440px; margin: 0 auto; }
 
@@ -254,75 +265,84 @@
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; min-height: 80vh; gap: 18px; text-align: center;
     }
-    .d-wait-title { font-size: 52px; font-weight: 900; }
-    .d-wait-sub   { font-size: 24px; color: var(--muted); }
-    .d-wait-n     { font-size: 20px; color: var(--gold); font-weight: 600; }
+    .d-wait-title { font-size: 52px; font-weight: 900; color: #fff; letter-spacing: -1px; }
+    .d-wait-sub   { font-size: 22px; color: rgba(255,255,255,0.38); }
+    .d-wait-n     { font-size: 20px; color: #14acc2; font-weight: 600; }
 
     .d-round  { margin-bottom: 28px; }
     .d-rlabel {
-      font-size: 11px; font-weight: 700; color: var(--faint);
-      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+      font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.22);
+      text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px;
+      font-family: 'Roboto Mono',monospace;
     }
-    .d-grid {
-      display: grid;
-      grid-template-columns: repeat(var(--cols,4), 1fr);
-      gap: 12px;
-    }
+    .d-grid { display: grid; grid-template-columns: repeat(var(--cols,4), 1fr); gap: 12px; }
 
     .d-heat {
-      background: var(--surf); border: 1px solid var(--border);
-      border-radius: 10px; padding: 14px 16px;
+      background: #1e2a56; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; padding: 14px 16px; color: #f1f5f9;
     }
-    .d-heat.d-done    { opacity: .5; }
-    .d-heat.d-active  { border-color: var(--gold); background: var(--gold-bg);
+    .d-heat.d-done    { opacity: .35; }
+    .d-heat.d-active  { border-color: #14acc2; background: rgba(20,172,194,0.08);
                         animation: glow 2s ease-in-out infinite; }
-    .d-heat.d-pending { opacity: .28; }
-    @keyframes glow { 0%,100%{border-color:rgba(245,158,11,.45)} 50%{border-color:var(--gold)} }
+    .d-heat.d-pending { opacity: .2; }
+    @keyframes glow { 0%,100%{border-color:rgba(20,172,194,.35)} 50%{border-color:#14acc2} }
 
-    .d-heat-top {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
-    }
-    .d-hn { font-size: 14px; font-weight: 700; }
+    .d-heat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .d-hn { font-size: 14px; font-weight: 700; color: #fff; }
     .d-tag {
       font-size: 10px; font-weight: 700; padding: 2px 7px;
-      border-radius: 20px; background: var(--surf2); color: var(--muted);
+      border-radius: 20px; background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.3);
+      font-family: 'Roboto Mono',monospace;
     }
-    .d-tag.tok { background: var(--green-bg); color: var(--green); }
-    .d-tag.tac { background: var(--gold-bg);  color: var(--gold); }
+    .d-tag.tok { background: rgba(0,154,125,0.2); color: #009A7D; }
+    .d-tag.tac { background: rgba(20,172,194,0.15); color: #14acc2; }
 
-    .d-pl {
-      display: flex; align-items: center; gap: 7px;
-      padding: 3px 0; font-size: 14px;
-    }
-    .d-pl.adv .d-pn { font-weight: 600; color: var(--green); }
-    .d-pl.out       { opacity: .3; }
+    .d-pl { display: flex; align-items: center; gap: 7px; padding: 4px 0; font-size: 14px; color: rgba(255,255,255,0.8); }
+    .d-pl.adv .d-pn { font-weight: 700; color: #009A7D; }
+    .d-pl.out       { opacity: .2; }
     .d-pdot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .d-pn    { flex: 1; }
-    .d-advarr { color: var(--green); font-size: 12px; }
+    .d-advarr { color: #009A7D; font-size: 12px; }
 
     .d-finish { max-width: 680px; margin: 60px auto; text-align: center; padding: 0 32px; }
     .d-finish-trophy { font-size: 64px; display: block; margin-bottom: 16px; }
-    .d-finish-name   { font-size: 48px; font-weight: 900; margin-bottom: 4px; }
-    .d-finish-sub    { font-size: 20px; color: var(--muted); margin-bottom: 36px; }
+    .d-finish-name   { font-size: 48px; font-weight: 900; color: #fff; margin-bottom: 4px; letter-spacing: -1px; }
+    .d-finish-sub    { font-size: 20px; color: rgba(255,255,255,0.32); margin-bottom: 36px; }
     .d-finish-row {
       display: flex; align-items: center; gap: 12px;
-      padding: 14px 18px; border-radius: 10px;
-      border: 1px solid var(--border); margin-bottom: 10px; text-align: left;
+      padding: 14px 18px; border-radius: 10px; text-align: left;
+      border: 1px solid rgba(255,255,255,0.07); margin-bottom: 10px;
+      background: #1e2a56;
     }
     .d-finish-medal { font-size: 26px; min-width: 38px; }
-    .d-finish-pn  { flex: 1; font-size: 19px; font-weight: 600; }
-    .d-finish-pts { font-size: 19px; font-weight: 700; color: var(--gold); }
+    .d-finish-pn  { flex: 1; font-size: 19px; font-weight: 600; color: rgba(255,255,255,0.9); }
+    .d-finish-pts { font-size: 19px; font-weight: 700; color: #14acc2; font-family: 'Roboto Mono',monospace; font-variant-numeric: tabular-nums; }
   </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="topbar-title">🎮 MK World Tournament</div>
-  <div style="display:flex;align-items:center;gap:10px">
+  <div style="display:flex;align-items:center;gap:14px">
+    <svg width="68" height="28" viewBox="0 0 120 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4.06297 9.10273C6.30689 9.10273 8.12595 7.26987 8.12595 5.00892C8.12595 2.74796 6.30689 0.9151 4.06297 0.9151C1.81905 0.9151 0 2.74796 0 5.00892C0 7.26987 1.81905 9.10273 4.06297 9.10273Z" fill="#63C740"/>
+      <path d="M16.2519 9.10273C18.4959 9.10273 20.3149 7.26987 20.3149 5.00892C20.3149 2.74796 18.4959 0.9151 16.2519 0.9151C14.008 0.9151 12.189 2.74796 12.189 5.00892C12.189 7.26987 14.008 9.10273 16.2519 9.10273Z" fill="#5CABDF"/>
+      <path d="M28.4408 9.10273C30.6847 9.10273 32.5037 7.26987 32.5037 5.00892C32.5037 2.74796 30.6847 0.9151 28.4408 0.9151C26.1969 0.9151 24.3778 2.74796 24.3778 5.00892C24.3778 7.26987 26.1969 9.10273 28.4408 9.10273Z" fill="#D66C7B"/>
+      <path d="M4.06297 21.3842C6.30689 21.3842 8.12595 19.5513 8.12595 17.2903C8.12595 15.0294 6.30689 13.1965 4.06297 13.1965C1.81905 13.1965 0 15.0294 0 17.2903C0 19.5513 1.81905 21.3842 4.06297 21.3842Z" fill="#C98DEF"/>
+      <path d="M16.2519 21.3842C18.4959 21.3842 20.3149 19.5513 20.3149 17.2903C20.3149 15.0294 18.4959 13.1965 16.2519 13.1965C14.008 13.1965 12.189 15.0294 12.189 17.2903C12.189 19.5513 14.008 21.3842 16.2519 21.3842Z" fill="#FAA669"/>
+      <path d="M4.06297 33.6657C6.30689 33.6657 8.12595 31.8328 8.12595 29.5718C8.12595 27.3109 6.30689 25.478 4.06297 25.478C1.81905 25.478 0 27.3109 0 29.5718C0 31.8328 1.81905 33.6657 4.06297 33.6657Z" fill="#3AEFC4"/>
+      <path d="M36.2113 31.8746C34.8401 31.8746 33.5602 31.8746 32.2397 31.8746C32.2397 30.4724 32.2397 29.101 32.2397 27.6784C33.5399 27.6784 34.8299 27.6784 36.2012 27.6784C36.2012 27.2383 36.2012 26.8596 36.2012 26.4707C36.2012 24.8741 36.2824 23.2776 36.77 21.7424C37.7959 18.498 40.0102 16.6968 43.3317 16.2464C43.7685 16.185 44.2052 16.1441 44.642 16.1441C48.1057 16.1339 51.5795 16.1339 55.0432 16.1339C55.1854 16.1339 55.3175 16.1441 55.4902 16.1543C55.4902 27.0541 55.4902 37.9334 55.4902 48.8537C53.804 48.8537 52.1179 48.8537 50.381 48.8537C50.381 39.6119 50.381 30.3701 50.381 21.1692C50.2997 21.0976 50.2692 21.0567 50.2388 21.0567C48.451 21.0771 46.643 20.9953 44.8655 21.1488C42.834 21.3228 41.6963 22.5509 41.4932 24.5978C41.4018 25.5803 41.4729 26.5731 41.4729 27.6272C42.9863 27.6272 44.5099 27.6272 46.0742 27.6272C46.0742 29.0601 46.0742 30.4315 46.0742 31.8541C44.5404 31.8541 43.0168 31.8541 41.4424 31.8541C41.4424 37.5445 41.4424 43.1735 41.4424 48.8434C39.675 48.8434 37.9685 48.8434 36.2113 48.8434C36.2113 43.2042 36.2113 37.5752 36.2113 31.8746Z" fill="white"/>
+      <path d="M74.7588 41.403C75.9675 42.3241 77.1051 43.194 78.2834 44.0844C77.4505 45.4251 76.3535 46.4281 75.0533 47.2059C70.838 49.7543 65.1803 49.4166 61.5439 46.3565C59.2788 44.4528 58.1107 41.9659 57.8263 39.0285C57.5622 36.3164 58.0092 33.7578 59.5226 31.455C61.4525 28.5074 64.2458 26.9825 67.7095 26.6652C70.7263 26.3889 73.4789 27.0951 75.8354 29.0806C77.938 30.8409 79.1061 33.1437 79.3804 35.8661C79.5023 37.0737 79.4007 38.3019 79.4007 39.571C73.9868 39.571 68.5932 39.571 63.1285 39.571C63.5145 41.3927 64.4185 42.7232 66.0437 43.4908C68.9182 44.8418 72.514 44.0639 74.6064 41.6383C74.6572 41.5769 74.6978 41.4951 74.7588 41.403ZM74.2814 35.8968C74.2103 33.2256 71.6811 31.1991 68.644 31.281C65.2514 31.3731 63.4028 33.6452 63.1996 35.8968C66.8766 35.8968 70.5637 35.8968 74.2814 35.8968Z" fill="white"/>
+      <path d="M103.362 39.6119C97.8161 39.6119 92.4225 39.6119 87.0289 39.6119C87.2727 41.6793 88.9588 43.4806 91.0716 43.9207C94.0477 44.545 96.6074 43.8388 98.6795 41.4439C99.8171 42.3138 100.965 43.1838 102.143 44.0844C101.442 45.2512 100.508 46.1416 99.4311 46.8887C95.0127 49.9181 88.5932 49.5087 84.9162 45.9266C82.3971 43.4703 81.4626 40.4 81.6455 36.9407C81.7978 34.1467 82.7831 31.6802 84.7943 29.7254C87.1711 27.4123 90.066 26.481 93.3265 26.655C96.4753 26.829 99.1163 28.0571 101.097 30.5646C102.742 32.6524 103.382 35.078 103.362 37.7083C103.362 38.3224 103.362 38.9364 103.362 39.6119ZM87.0188 35.8865C90.7465 35.8865 94.4438 35.8865 98.1411 35.8865C98.0396 33.8908 96.4753 31.4857 92.9913 31.2912C89.9136 31.1275 87.4251 32.9902 87.0188 35.8865Z" fill="white"/>
+      <path d="M120 43.9309C118.883 43.9309 117.755 43.9309 116.648 43.8285C114.617 43.6545 113.479 42.4264 113.276 40.3795C113.184 39.397 113.255 32.417 113.255 31.3731C114.769 31.3731 116.293 31.3731 117.857 31.3731C117.857 29.9403 117.857 28.5688 117.857 27.1462C116.323 27.1462 114.799 27.1462 113.225 27.1462C113.225 21.4558 113.225 21.814 113.225 16.1441C111.458 16.1441 109.751 16.1441 107.994 16.1441C107.994 21.7936 107.994 21.4456 107.994 27.1462C106.623 27.1462 105.343 27.1462 104.022 27.1462C104.022 28.5484 104.022 29.9198 104.022 31.3424C105.322 31.3424 106.612 31.3424 107.984 31.3424C107.984 31.7825 107.984 38.1484 107.984 38.527C107.984 40.1236 108.065 41.7202 108.553 43.2554C109.578 46.4997 111.793 48.301 115.114 48.7513C115.551 48.8127 115.988 48.8537 116.425 48.8537C117.613 48.8537 118.801 48.8537 120 48.8537V43.9309Z" fill="white"/>
+    </svg>
+    <div style="width:1px;height:18px;background:rgba(255,255,255,0.18);flex-shrink:0"></div>
+    <span class="topbar-title">MK Tournament</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
     <span class="topbar-phase" id="top-phase"></span>
-    <span id="save-badge" style="font-size:11px;color:var(--green);opacity:0;transition:opacity .4s">Saved ✓</span>
-    <button id="file-btn" class="btn btn-sm btn-ghost" style="font-size:12px" onclick="setupFileSave()">💾 Set save file</button>
-    <button class="btn btn-sm" style="font-size:12px" onclick="openDisplay()">Display ↗</button>
+    <span id="save-badge" style="font-size:11px;color:#3AEFC4;opacity:0;transition:opacity .4s">Saved ✓</span>
+    <button id="file-btn" class="btn btn-sm topbar-btn" onclick="setupFileSave()">💾 Set save file</button>
+    <button class="btn btn-sm topbar-btn-primary" onclick="openDisplay()">Display ↗</button>
   </div>
 </div>
 <div class="wrap" id="app"></div>
@@ -335,8 +355,8 @@ const SK = 'mkw-tourney-v3';
 const PTS = [4, 3, 2, 1];
 const ORD = ['1st', '2nd', '3rd', '4th'];
 const COLORS = [
-  '#60a5fa','#34d399','#fbbf24','#f87171',
-  '#a78bfa','#38bdf8','#fb923c','#4ade80',
+  '#63C740','#5CABDF','#D66C7B','#C98DEF',
+  '#FAA669','#3AEFC4','#6A67FE','#FF5C83',
 ];
 
 // ══════════════════════════════════════════════
@@ -438,11 +458,11 @@ function updateFileBtn() {
   if (!window.showSaveFilePicker) { btn.style.display = 'none'; return; }
   if (fileHandle) {
     btn.textContent = '💾 ' + fileHandle.name;
-    btn.style.color = 'var(--green)';
+    btn.style.color = '#3AEFC4';
     btn.title = 'Auto-saving to disk — click to change file';
   } else {
     btn.textContent = '💾 Set save file';
-    btn.style.color = 'var(--amber)';
+    btn.style.color = 'rgba(255,255,255,0.68)';
     btn.title = 'Click to set up automatic disk saving';
   }
 }
@@ -1014,7 +1034,22 @@ function vDisplay(s) {
 
   const hdr = `
     <div class="d-hdr">
-      <div class="d-hdr-title">🎮 MK World Tournament</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <svg width="56" height="23" viewBox="0 0 120 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4.06297 9.10273C6.30689 9.10273 8.12595 7.26987 8.12595 5.00892C8.12595 2.74796 6.30689 0.9151 4.06297 0.9151C1.81905 0.9151 0 2.74796 0 5.00892C0 7.26987 1.81905 9.10273 4.06297 9.10273Z" fill="#63C740"/>
+          <path d="M16.2519 9.10273C18.4959 9.10273 20.3149 7.26987 20.3149 5.00892C20.3149 2.74796 18.4959 0.9151 16.2519 0.9151C14.008 0.9151 12.189 2.74796 12.189 5.00892C12.189 7.26987 14.008 9.10273 16.2519 9.10273Z" fill="#5CABDF"/>
+          <path d="M28.4408 9.10273C30.6847 9.10273 32.5037 7.26987 32.5037 5.00892C32.5037 2.74796 30.6847 0.9151 28.4408 0.9151C26.1969 0.9151 24.3778 2.74796 24.3778 5.00892C24.3778 7.26987 26.1969 9.10273 28.4408 9.10273Z" fill="#D66C7B"/>
+          <path d="M4.06297 21.3842C6.30689 21.3842 8.12595 19.5513 8.12595 17.2903C8.12595 15.0294 6.30689 13.1965 4.06297 13.1965C1.81905 13.1965 0 15.0294 0 17.2903C0 19.5513 1.81905 21.3842 4.06297 21.3842Z" fill="#C98DEF"/>
+          <path d="M16.2519 21.3842C18.4959 21.3842 20.3149 19.5513 20.3149 17.2903C20.3149 15.0294 18.4959 13.1965 16.2519 13.1965C14.008 13.1965 12.189 15.0294 12.189 17.2903C12.189 19.5513 14.008 21.3842 16.2519 21.3842Z" fill="#FAA669"/>
+          <path d="M4.06297 33.6657C6.30689 33.6657 8.12595 31.8328 8.12595 29.5718C8.12595 27.3109 6.30689 25.478 4.06297 25.478C1.81905 25.478 0 27.3109 0 29.5718C0 31.8328 1.81905 33.6657 4.06297 33.6657Z" fill="#3AEFC4"/>
+          <path d="M36.2113 31.8746C34.8401 31.8746 33.5602 31.8746 32.2397 31.8746C32.2397 30.4724 32.2397 29.101 32.2397 27.6784C33.5399 27.6784 34.8299 27.6784 36.2012 27.6784C36.2012 27.2383 36.2012 26.8596 36.2012 26.4707C36.2012 24.8741 36.2824 23.2776 36.77 21.7424C37.7959 18.498 40.0102 16.6968 43.3317 16.2464C43.7685 16.185 44.2052 16.1441 44.642 16.1441C48.1057 16.1339 51.5795 16.1339 55.0432 16.1339C55.1854 16.1339 55.3175 16.1441 55.4902 16.1543C55.4902 27.0541 55.4902 37.9334 55.4902 48.8537C53.804 48.8537 52.1179 48.8537 50.381 48.8537C50.381 39.6119 50.381 30.3701 50.381 21.1692C50.2997 21.0976 50.2692 21.0567 50.2388 21.0567C48.451 21.0771 46.643 20.9953 44.8655 21.1488C42.834 21.3228 41.6963 22.5509 41.4932 24.5978C41.4018 25.5803 41.4729 26.5731 41.4729 27.6272C42.9863 27.6272 44.5099 27.6272 46.0742 27.6272C46.0742 29.0601 46.0742 30.4315 46.0742 31.8541C44.5404 31.8541 43.0168 31.8541 41.4424 31.8541C41.4424 37.5445 41.4424 43.1735 41.4424 48.8434C39.675 48.8434 37.9685 48.8434 36.2113 48.8434C36.2113 43.2042 36.2113 37.5752 36.2113 31.8746Z" fill="white"/>
+          <path d="M74.7588 41.403C75.9675 42.3241 77.1051 43.194 78.2834 44.0844C77.4505 45.4251 76.3535 46.4281 75.0533 47.2059C70.838 49.7543 65.1803 49.4166 61.5439 46.3565C59.2788 44.4528 58.1107 41.9659 57.8263 39.0285C57.5622 36.3164 58.0092 33.7578 59.5226 31.455C61.4525 28.5074 64.2458 26.9825 67.7095 26.6652C70.7263 26.3889 73.4789 27.0951 75.8354 29.0806C77.938 30.8409 79.1061 33.1437 79.3804 35.8661C79.5023 37.0737 79.4007 38.3019 79.4007 39.571C73.9868 39.571 68.5932 39.571 63.1285 39.571C63.5145 41.3927 64.4185 42.7232 66.0437 43.4908C68.9182 44.8418 72.514 44.0639 74.6064 41.6383C74.6572 41.5769 74.6978 41.4951 74.7588 41.403ZM74.2814 35.8968C74.2103 33.2256 71.6811 31.1991 68.644 31.281C65.2514 31.3731 63.4028 33.6452 63.1996 35.8968C66.8766 35.8968 70.5637 35.8968 74.2814 35.8968Z" fill="white"/>
+          <path d="M103.362 39.6119C97.8161 39.6119 92.4225 39.6119 87.0289 39.6119C87.2727 41.6793 88.9588 43.4806 91.0716 43.9207C94.0477 44.545 96.6074 43.8388 98.6795 41.4439C99.8171 42.3138 100.965 43.1838 102.143 44.0844C101.442 45.2512 100.508 46.1416 99.4311 46.8887C95.0127 49.9181 88.5932 49.5087 84.9162 45.9266C82.3971 43.4703 81.4626 40.4 81.6455 36.9407C81.7978 34.1467 82.7831 31.6802 84.7943 29.7254C87.1711 27.4123 90.066 26.481 93.3265 26.655C96.4753 26.829 99.1163 28.0571 101.097 30.5646C102.742 32.6524 103.382 35.078 103.362 37.7083C103.362 38.3224 103.362 38.9364 103.362 39.6119ZM87.0188 35.8865C90.7465 35.8865 94.4438 35.8865 98.1411 35.8865C98.0396 33.8908 96.4753 31.4857 92.9913 31.2912C89.9136 31.1275 87.4251 32.9902 87.0188 35.8865Z" fill="white"/>
+          <path d="M120 43.9309C118.883 43.9309 117.755 43.9309 116.648 43.8285C114.617 43.6545 113.479 42.4264 113.276 40.3795C113.184 39.397 113.255 32.417 113.255 31.3731C114.769 31.3731 116.293 31.3731 117.857 31.3731C117.857 29.9403 117.857 28.5688 117.857 27.1462C116.323 27.1462 114.799 27.1462 113.225 27.1462C113.225 21.4558 113.225 21.814 113.225 16.1441C111.458 16.1441 109.751 16.1441 107.994 16.1441C107.994 21.7936 107.994 21.4456 107.994 27.1462C106.623 27.1462 105.343 27.1462 104.022 27.1462C104.022 28.5484 104.022 29.9198 104.022 31.3424C105.322 31.3424 106.612 31.3424 107.984 31.3424C107.984 31.7825 107.984 38.1484 107.984 38.527C107.984 40.1236 108.065 41.7202 108.553 43.2554C109.578 46.4997 111.793 48.301 115.114 48.7513C115.551 48.8127 115.988 48.8537 116.425 48.8537C117.613 48.8537 118.801 48.8537 120 48.8537V43.9309Z" fill="white"/>
+        </svg>
+        <div style="width:1px;height:14px;background:rgba(255,255,255,0.15)"></div>
+        <span class="d-hdr-title">MK Tournament</span>
+      </div>
       <div class="d-hdr-status">${statusText}</div>
       <div class="d-live"><div class="d-live-dot"></div>Live</div>
     </div>`;

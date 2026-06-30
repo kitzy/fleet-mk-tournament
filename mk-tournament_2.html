@@ -320,6 +320,8 @@
   <div class="topbar-title">🎮 MK World Tournament</div>
   <div style="display:flex;align-items:center;gap:10px">
     <span class="topbar-phase" id="top-phase"></span>
+    <span id="save-badge" style="font-size:11px;color:var(--green);opacity:0;transition:opacity .4s">Saved ✓</span>
+    <button id="file-btn" class="btn btn-sm btn-ghost" style="font-size:12px" onclick="setupFileSave()">💾 Set save file</button>
     <button class="btn btn-sm" style="font-size:12px" onclick="openDisplay()">Display ↗</button>
   </div>
 </div>
@@ -355,8 +357,121 @@ function blank() {
   };
 }
 
-function load()    { return JSON.parse(localStorage.getItem(SK) || 'null') || blank(); }
-function save(s)   { localStorage.setItem(SK, JSON.stringify(s)); }
+function load()  { return JSON.parse(localStorage.getItem(SK) || 'null') || blank(); }
+function save(s) {
+  localStorage.setItem(SK, JSON.stringify(s));
+  writeToFile();
+  const badge = document.getElementById('save-badge');
+  if (badge) { badge.style.opacity = '1'; clearTimeout(badge._t); badge._t = setTimeout(() => badge.style.opacity = '0', 1500); }
+}
+
+// ── File System Access API — automatic disk persistence ──
+let fileHandle = null;
+
+function getHandleDB() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('mkw-fh', 1);
+    r.onupgradeneeded = e => e.target.result.createObjectStore('h');
+    r.onsuccess = e => res(e.target.result);
+    r.onerror = rej;
+  });
+}
+
+async function loadStoredHandle() {
+  try {
+    const db = await getHandleDB();
+    return new Promise(res => {
+      const tx = db.transaction('h', 'readonly');
+      const req = tx.objectStore('h').get('fh');
+      req.onsuccess = e => res(e.target.result ?? null);
+      req.onerror = () => res(null);
+    });
+  } catch { return null; }
+}
+
+async function storeHandle(fh) {
+  try {
+    const db = await getHandleDB();
+    await new Promise(res => {
+      const tx = db.transaction('h', 'readwrite');
+      tx.objectStore('h').put(fh, 'fh');
+      tx.oncomplete = res; tx.onerror = res;
+    });
+  } catch {}
+}
+
+async function writeToFile() {
+  if (!fileHandle) return;
+  try {
+    const perm = await fileHandle.queryPermission({ mode: 'readwrite' });
+    if (perm !== 'granted') return;
+    const w = await fileHandle.createWritable();
+    await w.write(JSON.stringify(load(), null, 2));
+    await w.close();
+  } catch {}
+}
+
+async function setupFileSave() {
+  if (!window.showSaveFilePicker) {
+    alert('Automatic file saving requires Chrome or Edge. In other browsers, use the browser\'s built-in storage only.');
+    return;
+  }
+  try {
+    const fh = await window.showSaveFilePicker({
+      suggestedName: 'mk-tournament.json',
+      types: [{ description: 'Tournament save', accept: { 'application/json': ['.json'] } }],
+    });
+    fileHandle = fh;
+    await storeHandle(fh);
+    await (async () => {
+      const w = await fh.createWritable();
+      await w.write(JSON.stringify(load(), null, 2));
+      await w.close();
+    })();
+    updateFileBtn();
+  } catch (e) { if (e.name !== 'AbortError') alert('Could not set up file save: ' + e.message); }
+}
+
+function updateFileBtn() {
+  const btn = document.getElementById('file-btn');
+  if (!btn) return;
+  if (!window.showSaveFilePicker) { btn.style.display = 'none'; return; }
+  if (fileHandle) {
+    btn.textContent = '💾 ' + fileHandle.name;
+    btn.style.color = 'var(--green)';
+    btn.title = 'Auto-saving to disk — click to change file';
+  } else {
+    btn.textContent = '💾 Set save file';
+    btn.style.color = 'var(--amber)';
+    btn.title = 'Click to set up automatic disk saving';
+  }
+}
+
+async function initPersistence() {
+  if (!window.showSaveFilePicker) { render(); return; }
+  const fh = await loadStoredHandle();
+  if (fh) {
+    fileHandle = fh;
+    // If we have write permission already (same session), try to restore from
+    // disk — it may be fresher than localStorage if the browser wiped storage.
+    try {
+      const perm = await fh.queryPermission({ mode: 'readwrite' });
+      if (perm === 'granted') {
+        const file = await fh.getFile();
+        const data = JSON.parse(await file.text());
+        if (data.phase && Array.isArray(data.players)) {
+          const local = load();
+          // Prefer file if localStorage looks empty/default and file has real data
+          if (local.phase === 'signup' && local.players.length === 0 && data.players.length > 0) {
+            localStorage.setItem(SK, JSON.stringify(data));
+          }
+        }
+      }
+    } catch {}
+  }
+  updateFileBtn();
+  render();
+}
 function uid()     { return Math.random().toString(36).slice(2, 9); }
 
 function shuffle(arr) {
@@ -1175,7 +1290,7 @@ function openDisplay() {
 window.addEventListener('storage', e => { if (e.key === SK) render(); });
 // Fallback poll every 2 s (covers the same-tab edge case).
 setInterval(() => { if (window.location.hash === '#display') render(); }, 2000);
-render();
+initPersistence();
 </script>
 </body>
 </html>

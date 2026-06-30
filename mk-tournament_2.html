@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MK World Tournament</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f172a;
+      --surf:     #1e293b;
+      --surf2:    #263347;
+      --border:   rgba(255,255,255,0.08);
+      --border2:  rgba(255,255,255,0.16);
+      --text:     #f1f5f9;
+      --muted:    #94a3b8;
+      --faint:    #475569;
+      --gold:     #f59e0b;
+      --gold-bg:  rgba(245,158,11,0.12);
+      --blue:     #3b82f6;
+      --blue-bg:  rgba(59,130,246,0.12);
+      --green:    #22c55e;
+      --green-bg: rgba(34,197,94,0.12);
+      --red:      #ef4444;
+      --red-bg:   rgba(239,68,68,0.12);
+      --amber:    #f59e0b;
+      --amber-bg: rgba(245,158,11,0.12);
+      --r:        8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ── Layout ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--surf);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar-title { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+    .topbar-phase { font-size: 12px; color: var(--muted); }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 40px; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surf); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px; margin-bottom: 12px;
+    }
+    .card-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 12px;
+    }
+
+    /* ── Buttons ── */
+    button { font-family: inherit; cursor: pointer; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 18px; border-radius: var(--r);
+      border: 1px solid var(--border2);
+      background: var(--surf2); color: var(--text);
+      font-size: 14px; font-weight: 500;
+      transition: opacity .1s;
+    }
+    .btn:hover:not(:disabled) { opacity: .8; }
+    .btn:active:not(:disabled) { opacity: .65; }
+    .btn:disabled { opacity: .35; cursor: not-allowed; }
+    .btn-gold  { background: var(--gold);  color: #000; border-color: var(--gold); }
+    .btn-ghost { background: transparent; }
+    .btn-sm    { padding: 5px 12px; font-size: 13px; }
+    .btn-block { width: 100%; }
+    .btn-danger { color: var(--red); border-color: rgba(239,68,68,.3); background: var(--red-bg); }
+
+    /* ── Form ── */
+    input[type=text] {
+      width: 100%; padding: 10px 13px;
+      border: 1px solid var(--border2); border-radius: var(--r);
+      background: var(--surf2); color: var(--text);
+      font-size: 15px; font-family: inherit; outline: none;
+    }
+    input[type=text]:focus { border-color: var(--gold); }
+    input[type=text]::placeholder { color: var(--faint); }
+
+    .seg {
+      display: flex; border: 1px solid var(--border2); border-radius: var(--r);
+      overflow: hidden;
+    }
+    .seg-btn {
+      flex: 1; padding: 8px 4px;
+      border: none; border-right: 1px solid var(--border2);
+      background: transparent; color: var(--muted);
+      font-size: 13px; font-weight: 500;
+    }
+    .seg-btn:last-child { border-right: none; }
+    .seg-btn.on { background: var(--gold); color: #000; }
+
+    /* ── Skill badges ── */
+    .badge {
+      display: inline-block; padding: 2px 7px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+    }
+    .badge-beginner     { background: var(--green-bg); color: var(--green); }
+    .badge-intermediate { background: var(--amber-bg); color: var(--amber); }
+    .badge-advanced     { background: var(--red-bg);   color: var(--red); }
+
+    /* ── Skill picker ── */
+    .skill-row { display: flex; gap: 6px; margin-top: 8px; }
+    .skill-pick {
+      flex: 1; padding: 8px 4px; border-radius: var(--r);
+      border: 1px solid var(--border2); background: transparent;
+      color: var(--muted); font-size: 13px; font-weight: 500;
+    }
+    .skill-pick.on-beginner     { border-color: var(--green); background: var(--green-bg); color: var(--green); }
+    .skill-pick.on-intermediate { border-color: var(--amber); background: var(--amber-bg); color: var(--amber); }
+    .skill-pick.on-advanced     { border-color: var(--red);   background: var(--red-bg);   color: var(--red); }
+
+    /* ── Player list (signup) ── */
+    .prow {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 0; border-bottom: 1px solid var(--border);
+    }
+    .prow:last-child { border-bottom: none; }
+    .prow-num { font-size: 12px; color: var(--faint); min-width: 22px; }
+    .prow-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .prow-name { flex: 1; font-size: 14px; font-weight: 500; }
+    .prow-del {
+      background: none; border: none; color: var(--faint);
+      font-size: 18px; padding: 2px 6px; border-radius: var(--r);
+    }
+    .prow-del:hover { color: var(--red); background: var(--red-bg); }
+
+    /* ── Bracket round / heat cards ── */
+    .round-label {
+      font-size: 11px; font-weight: 700; color: var(--faint);
+      text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px;
+    }
+    .round-section { margin-bottom: 24px; }
+
+    .heat-card {
+      background: var(--surf); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 12px 14px; margin-bottom: 8px;
+      cursor: pointer; transition: border-color .15s;
+    }
+    .heat-card:hover:not(.no-click) { border-color: var(--gold); }
+    .heat-card.no-click { cursor: default; }
+    .heat-card.done { opacity: .6; }
+    .heat-card.locked { opacity: .4; cursor: default; }
+    .heat-card.locked:hover { border-color: var(--border); }
+
+    .heat-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .heat-name { font-size: 13px; font-weight: 600; }
+    .heat-status { font-size: 12px; color: var(--muted); }
+    .heat-status.ok   { color: var(--green); }
+    .heat-status.open { color: var(--gold); }
+
+    .heat-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; padding: 3px 9px; border-radius: 20px;
+      border: 1px solid var(--border2); background: var(--surf2);
+      color: var(--text);
+    }
+    .chip.adv { border-color: var(--green); background: var(--green-bg); color: var(--green); font-weight: 600; }
+    .chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Heat racing view ── */
+    .pick-btn {
+      width: 100%; display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border-radius: var(--r);
+      border: 1px solid var(--border2); background: var(--surf2);
+      color: var(--text); font-size: 14px; font-weight: 500;
+      text-align: left; margin-bottom: 8px;
+    }
+    .pick-btn:hover { border-color: var(--gold); background: var(--gold-bg); }
+
+    .res-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 0; border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .res-row:last-child { border-bottom: none; }
+    .res-pos { font-size: 12px; color: var(--muted); min-width: 28px; }
+    .res-name { flex: 1; }
+    .res-pts { font-size: 13px; font-weight: 700; color: var(--gold); }
+    .res-undo { background: none; border: none; color: var(--faint); font-size: 13px; padding: 2px 5px; }
+    .res-undo:hover { color: var(--red); }
+
+    .adv-tag { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: .5px; }
+
+    /* ── Progress ── */
+    .pbar { height: 3px; background: var(--surf2); border-radius: 2px; overflow: hidden; margin-bottom: 14px; }
+    .pfill { height: 100%; background: var(--gold); border-radius: 2px; transition: width .3s; }
+
+    /* ── Done screen ── */
+    .podium-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border-radius: var(--r);
+      border: 1px solid var(--border); margin-bottom: 8px;
+    }
+    .podium-medal { font-size: 22px; flex-shrink: 0; min-width: 30px; }
+    .podium-name { flex: 1; font-size: 15px; font-weight: 600; }
+    .podium-pts { font-size: 15px; font-weight: 700; color: var(--gold); }
+
+    /* ── Misc ── */
+    .gap { height: 14px; }
+    .info { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .info-box {
+      padding: 10px 13px; border-radius: var(--r);
+      font-size: 13px; margin-bottom: 12px;
+      background: var(--blue-bg); color: #93c5fd;
+      border: 1px solid rgba(59,130,246,.25);
+    }
+    .info-box.ok { background: var(--green-bg); color: #86efac; border-color: rgba(34,197,94,.25); }
+    .info-box.warn { background: var(--amber-bg); color: #fde68a; border-color: rgba(245,158,11,.25); }
+    .empty { text-align: center; padding: 28px 0; color: var(--faint); font-size: 14px; }
+    .row { display: flex; gap: 8px; align-items: center; }
+    .flex1 { flex: 1; }
+    .mt8 { margin-top: 8px; }
+    .mt12 { margin-top: 12px; }
+    .mb8 { margin-bottom: 8px; }
+    .complete-check { font-size: 36px; display: block; text-align: center; margin: 12px 0 6px; }
+    .complete-title { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+    .complete-sub { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 16px; }
+    /* ── Display mode (index.html#display) ── */
+    body.dm .topbar { display: none !important; }
+
+    .d-hdr {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--surf); border-bottom: 1px solid var(--border);
+      padding: 14px 32px; display: flex; align-items: center; gap: 20px;
+    }
+    .d-hdr-title  { font-size: 17px; font-weight: 800; }
+    .d-hdr-status { flex: 1; font-size: 15px; font-weight: 600; color: var(--gold); }
+    .d-live { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
+    .d-live-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+      animation: blink 1.8s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+    .d-body { padding: 24px 32px 48px; max-width: 1440px; margin: 0 auto; }
+
+    .d-wait {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 80vh; gap: 18px; text-align: center;
+    }
+    .d-wait-title { font-size: 52px; font-weight: 900; }
+    .d-wait-sub   { font-size: 24px; color: var(--muted); }
+    .d-wait-n     { font-size: 20px; color: var(--gold); font-weight: 600; }
+
+    .d-round  { margin-bottom: 28px; }
+    .d-rlabel {
+      font-size: 11px; font-weight: 700; color: var(--faint);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+    }
+    .d-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--cols,4), 1fr);
+      gap: 12px;
+    }
+
+    .d-heat {
+      background: var(--surf); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .d-heat.d-done    { opacity: .5; }
+    .d-heat.d-active  { border-color: var(--gold); background: var(--gold-bg);
+                        animation: glow 2s ease-in-out infinite; }
+    .d-heat.d-pending { opacity: .28; }
+    @keyframes glow { 0%,100%{border-color:rgba(245,158,11,.45)} 50%{border-color:var(--gold)} }
+
+    .d-heat-top {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+    }
+    .d-hn { font-size: 14px; font-weight: 700; }
+    .d-tag {
+      font-size: 10px; font-weight: 700; padding: 2px 7px;
+      border-radius: 20px; background: var(--surf2); color: var(--muted);
+    }
+    .d-tag.tok { background: var(--green-bg); color: var(--green); }
+    .d-tag.tac { background: var(--gold-bg);  color: var(--gold); }
+
+    .d-pl {
+      display: flex; align-items: center; gap: 7px;
+      padding: 3px 0; font-size: 14px;
+    }
+    .d-pl.adv .d-pn { font-weight: 600; color: var(--green); }
+    .d-pl.out       { opacity: .3; }
+    .d-pdot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .d-pn    { flex: 1; }
+    .d-advarr { color: var(--green); font-size: 12px; }
+
+    .d-finish { max-width: 680px; margin: 60px auto; text-align: center; padding: 0 32px; }
+    .d-finish-trophy { font-size: 64px; display: block; margin-bottom: 16px; }
+    .d-finish-name   { font-size: 48px; font-weight: 900; margin-bottom: 4px; }
+    .d-finish-sub    { font-size: 20px; color: var(--muted); margin-bottom: 36px; }
+    .d-finish-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px; border-radius: 10px;
+      border: 1px solid var(--border); margin-bottom: 10px; text-align: left;
+    }
+    .d-finish-medal { font-size: 26px; min-width: 38px; }
+    .d-finish-pn  { flex: 1; font-size: 19px; font-weight: 600; }
+    .d-finish-pts { font-size: 19px; font-weight: 700; color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">🎮 MK World Tournament</div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="topbar-phase" id="top-phase"></span>
+    <button class="btn btn-sm" style="font-size:12px" onclick="openDisplay()">Display ↗</button>
+  </div>
+</div>
+<div class="wrap" id="app"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  CONSTANTS
+// ══════════════════════════════════════════════
+const SK = 'mkw-tourney-v3';
+const PTS = [4, 3, 2, 1];
+const ORD = ['1st', '2nd', '3rd', '4th'];
+const COLORS = [
+  '#60a5fa','#34d399','#fbbf24','#f87171',
+  '#a78bfa','#38bdf8','#fb923c','#4ade80',
+];
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+function blank() {
+  return {
+    phase: 'signup',       // signup | bracket | heat | done
+    players: [],
+    nextColorIdx: 0,       // stable dot-color counter — never reused, survives deletes
+    racesPerHeat: 2,
+    newSkill: 'intermediate',
+    lateSkill: 'intermediate',
+    lateMsg: null,         // { ok: bool, text: string } — cleared on next add
+    bracket: null,
+    activeHeat: null,      // { ri, hi }
+    picks: [],
+  };
+}
+
+function load()    { return JSON.parse(localStorage.getItem(SK) || 'null') || blank(); }
+function save(s)   { localStorage.setItem(SK, JSON.stringify(s)); }
+function uid()     { return Math.random().toString(36).slice(2, 9); }
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Dot color is keyed to a permanent per-player index, not seed —
+// seed can be recomputed but a player's color never changes.
+function playerColor(colorIdx) { return COLORS[(colorIdx || 0) % COLORS.length]; }
+
+// ══════════════════════════════════════════════
+//  BRACKET MATH
+// ══════════════════════════════════════════════
+function idealHeatCount(n) {
+  // Smallest heat count such that n/heats <= 4 (always 1, 2, 4, or 8)
+  if (n <= 4)  return 1;
+  if (n <= 8)  return 2;
+  if (n <= 16) return 4;
+  return 8;
+}
+
+function heatSizes(n, numHeats) {
+  // Distribute n players into numHeats groups of size base or base+1
+  const base  = Math.floor(n / numHeats);
+  const extra = n % numHeats;
+  return Array.from({ length: numHeats }, (_, i) => i < extra ? base + 1 : base);
+}
+
+function snakeDraft(sortedPlayers, numHeats) {
+  const buckets = Array.from({ length: numHeats }, () => []);
+  let fwd = true, idx = 0;
+  sortedPlayers.forEach(p => {
+    buckets[idx].push(p);
+    if (fwd) { idx++; if (idx >= numHeats) { idx = numHeats - 1; fwd = false; } }
+    else      { idx--; if (idx < 0)        { idx = 0;            fwd = true;  } }
+  });
+  return buckets;
+}
+
+function heatLabel(roundName, i, isFirstRound) {
+  if (isFirstRound) return roundName === 'Final' ? 'Final' : `Group ${'ABCDEFGH'[i] || (i + 1)}`;
+  if (roundName === 'Final')         return 'Final';
+  if (roundName === 'Semifinals')    return `SF ${i + 1}`;
+  if (roundName === 'Quarterfinals') return `QF ${i + 1}`;
+  return `Heat ${i + 1}`;
+}
+
+// Builds one round (a set of heats) from a flat pool of players.
+// isFirstRound controls naming: round 1 is always "Round 1" (or "Final"
+// if it's small enough to BE the final outright) — never "Semifinals".
+function makeRound(pool, isFirstRound) {
+  const n = pool.length;
+  const heatCount = idealHeatCount(n);
+  const sizes  = heatSizes(n, heatCount);
+  const sorted = [...pool].sort((a, b) => a.seed - b.seed);
+  const buckets = snakeDraft(sorted, heatCount);
+  const roundName = isFirstRound
+    ? (heatCount === 1 ? 'Final' : 'Round 1')
+    : (heatCount === 1 ? 'Final' : heatCount === 2 ? 'Semifinals' : heatCount === 4 ? 'Quarterfinals' : 'Round');
+  const heats = buckets.map((bucket, i) => ({
+    id: uid(),
+    name: heatLabel(roundName, i, isFirstRound),
+    players: bucket,
+    races: [],
+    complete: false,
+    advancers: [],
+  }));
+  return { name: roundName, heats, complete: false };
+}
+
+// Re-derives round 1's name + heat labels after its heat count changes
+// (e.g. a late entry forces a brand new heat to be created).
+function relabelRound0(round0) {
+  const heatCount = round0.heats.length;
+  round0.name = heatCount === 1 ? 'Final' : 'Round 1';
+  round0.heats.forEach((h, i) => {
+    h.name = heatCount === 1 ? 'Final' : `Group ${'ABCDEFGH'[i] || (i + 1)}`;
+  });
+}
+
+function startRound1(players, racesPerHeat) {
+  // Seed: shuffle within skill tiers, then concat Advanced → Intermediate → Beginner
+  const adv = shuffle(players.filter(p => p.skill === 'advanced'));
+  const mid = shuffle(players.filter(p => p.skill === 'intermediate'));
+  const beg = shuffle(players.filter(p => p.skill === 'beginner'));
+  const seeded = [...adv, ...mid, ...beg].map((p, i) => ({ ...p, seed: i + 1 }));
+  const round0 = makeRound(seeded, true);
+  return { players: seeded, racesPerHeat, entryLocked: false, rounds: [round0], complete: false, winner: null };
+}
+
+// ══════════════════════════════════════════════
+//  POINTS & RANKING
+// ══════════════════════════════════════════════
+function heatPts(heat) {
+  const t = {};
+  heat.players.forEach(p => t[p.id] = 0);
+  heat.races.forEach(race =>
+    race.forEach((pid, rank) => { if (t[pid] !== undefined) t[pid] += PTS[rank] ?? 1; })
+  );
+  return t;
+}
+
+function heatRanked(heat) {
+  const t = heatPts(heat);
+  return [...heat.players].sort((a, b) => (t[b.id] || 0) - (t[a.id] || 0));
+}
+
+// ══════════════════════════════════════════════
+//  HEAT COMPLETION
+// ══════════════════════════════════════════════
+function closeHeat(bracket, ri, hi) {
+  const round = bracket.rounds[ri];
+  const heat = round.heats[hi];
+  heat.advancers = heatRanked(heat).slice(0, 2).map(p => p.id);
+  heat.complete = true;
+
+  if (!round.heats.every(h => h.complete)) return bracket;
+  round.complete = true;
+
+  // A round consisting of exactly one heat IS the final — it's over.
+  if (round.heats.length === 1) {
+    bracket.complete = true;
+    bracket.winner = heat.advancers[0];
+    return bracket;
+  }
+
+  // Otherwise, gather every heat's top-2 and build the next round from
+  // scratch based on however many advancers there actually are. This is
+  // what lets round 1 end up with any number of heats (not just powers
+  // of 2 fixed up-front) and still flow cleanly into QF/SF/Final.
+  const advancerIds = round.heats.flatMap(h => h.advancers);
+  const pool = advancerIds.map(id => bracket.players.find(p => p.id === id)).filter(Boolean);
+  bracket.rounds.push(makeRound(pool, false));
+  return bracket;
+}
+
+// ══════════════════════════════════════════════
+//  RENDER DISPATCHER
+// ══════════════════════════════════════════════
+function render() {
+  const s = load();
+  const isDM = window.location.hash === '#display';
+
+  if (isDM) {
+    document.body.classList.add('dm');
+    document.title = '🎮 Tournament Display';
+    document.getElementById('app').innerHTML = vDisplay(s);
+    return;
+  }
+
+  document.body.classList.remove('dm');
+  const phases = { signup: 'Sign-up', bracket: 'Bracket', heat: 'Racing', done: 'Done' };
+  document.getElementById('top-phase').textContent = phases[s.phase] || '';
+  const app = document.getElementById('app');
+  if      (s.phase === 'signup')  app.innerHTML = vSignup(s);
+  else if (s.phase === 'bracket') app.innerHTML = vBracket(s);
+  else if (s.phase === 'heat')    app.innerHTML = vHeat(s);
+  else                             app.innerHTML = vDone(s);
+}
+
+// ══════════════════════════════════════════════
+//  VIEW: SIGN-UP
+// ══════════════════════════════════════════════
+function skillBadge(sk) {
+  return `<span class="badge badge-${sk}">${sk.charAt(0).toUpperCase() + sk.slice(1)}</span>`;
+}
+
+function vSignup(s) {
+  const n = s.players.length;
+  const r1 = idealHeatCount(n);
+
+  let infoMsg, infoKlass;
+  if (n < 6) {
+    infoMsg  = `Add at least ${6 - n} more player${6 - n !== 1 ? 's' : ''} to start.`;
+    infoKlass = 'info-box';
+  } else if (n > 32) {
+    infoMsg  = `Too many players — remove ${n - 32}.`;
+    infoKlass = 'info-box warn';
+  } else {
+    const g4 = n - r1 * Math.floor(n / r1);
+    const g3 = r1 - g4;
+    const desc = g4 > 0 && g3 > 0
+      ? `${r1} groups: ${g4} × 4 players, ${g3} × 3 players`
+      : `${r1} groups of ${Math.floor(n / r1)}`;
+    infoMsg   = `${n} players — ${desc}. Top 2 from each group advance.`;
+    infoKlass = 'info-box ok';
+  }
+
+  const canStart = n >= 6 && n <= 32;
+
+  const skillBtns = ['beginner', 'intermediate', 'advanced'].map(sk =>
+    `<button class="skill-pick ${s.newSkill === sk ? 'on-' + sk : ''}"
+      onclick="setSkill('${sk}')">${sk.charAt(0).toUpperCase() + sk.slice(1)}</button>`
+  ).join('');
+
+  const rows = n === 0
+    ? `<div class="empty">No players yet. Add some above.</div>`
+    : s.players.map((p, i) =>
+        `<div class="prow">
+          <span class="prow-num">${i + 1}</span>
+          <span class="prow-dot" style="background:${playerColor(p.colorIdx)}"></span>
+          <span class="prow-name">${esc(p.name)}</span>
+          ${skillBadge(p.skill)}
+          <button class="prow-del" onclick="delPlayer('${p.id}')" title="Remove">×</button>
+        </div>`
+      ).join('');
+
+  const raceSeg = [1, 2, 3].map(r =>
+    `<button class="seg-btn ${s.racesPerHeat === r ? 'on' : ''}"
+      onclick="setRPH(${r})">${r} race${r > 1 ? 's' : ''}</button>`
+  ).join('');
+
+  return `
+    <div class="gap"></div>
+
+    <div class="card">
+      <div class="card-label">Add player</div>
+      <div class="row">
+        <input type="text" id="namein" placeholder="Name" maxlength="24"
+          onkeydown="if(event.key==='Enter')addPlayer()" />
+        <button class="btn btn-gold" onclick="addPlayer()">Add</button>
+      </div>
+      <div class="skill-row">${skillBtns}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Races per heat</div>
+      <div class="seg">${raceSeg}</div>
+      <div class="info mt8">${
+        s.racesPerHeat === 1
+          ? 'Fastest — one race per heat, higher variance.'
+          : s.racesPerHeat === 2
+          ? 'Recommended — balanced between speed and fairness.'
+          : 'Thorough — most accurate results, adds ~40 min.'
+      }</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Players (${n})</div>
+      <div class="${infoKlass}">${infoMsg}</div>
+      ${rows}
+      ${n > 0 ? `<div class="mt12"><button class="btn btn-sm btn-ghost btn-danger" onclick="clearAll()">Clear all</button></div>` : ''}
+    </div>
+
+    <button class="btn btn-gold btn-block" onclick="startTournament()" ${canStart ? '' : 'disabled'}>
+      Start Tournament →
+    </button>
+    <div class="info mt8" style="text-align:center">
+      You can keep adding players after this — up to 32 total. New heats form automatically until Round 1 finishes.
+    </div>
+    <div class="gap"></div>
+  `;
+}
+
+// ══════════════════════════════════════════════
+//  VIEW: BRACKET OVERVIEW
+// ══════════════════════════════════════════════
+function vBracket(s) {
+  const b = s.bracket;
+  const totalRaces  = b.rounds.reduce((s2, r) => s2 + r.heats.reduce((s3, h) => s3 + h.races.length, 0), 0);
+  const totalNeeded = b.rounds.reduce((s2, r) => s2 + r.heats.length * b.racesPerHeat, 0);
+  const pct = totalNeeded ? Math.round(totalRaces / totalNeeded * 100) : 0;
+
+  const round0 = b.rounds[0];
+  const slotsLeft = 32 - b.players.length;
+
+  const lateSkillBtns = ['beginner', 'intermediate', 'advanced'].map(sk =>
+    `<button class="skill-pick ${(s.lateSkill || 'intermediate') === sk ? 'on-' + sk : ''}"
+      onclick="setLateSkill('${sk}')">${sk.charAt(0).toUpperCase() + sk.slice(1)}</button>`
+  ).join('');
+
+  const msgHtml = s.lateMsg
+    ? `<div class="info-box ${s.lateMsg.ok ? 'ok' : 'warn'} mt8">${s.lateMsg.text}</div>`
+    : '';
+
+  let lateBody;
+  if (round0.complete) {
+    lateBody = ''; // hide the panel entirely once Round 1 is fully done
+  } else if (slotsLeft <= 0) {
+    lateBody = `
+      <div class="card" style="border-color:rgba(245,158,11,.3)">
+        <div class="card-label">Late entry</div>
+        <div class="info">Bracket is full — 32 players maximum.</div>
+      </div>`;
+  } else if (b.entryLocked) {
+    lateBody = `
+      <div class="card" style="border-color:rgba(245,158,11,.3)">
+        <div class="card-label" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Late entry</span>
+          <button class="btn btn-sm btn-ghost" style="font-size:12px" onclick="lockEntries()">Reopen</button>
+        </div>
+        <div class="info">Sign-ups are closed. Re-open to keep adding players.</div>
+      </div>`;
+  } else {
+    lateBody = `
+      <div class="card" style="border-color:rgba(245,158,11,.35)">
+        <div class="card-label" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Late entry</span>
+          <span style="font-weight:400;color:var(--muted);letter-spacing:0">${slotsLeft} slot${slotsLeft !== 1 ? 's' : ''} left</span>
+        </div>
+        <div class="row">
+          <input type="text" id="late-in" placeholder="Player name" maxlength="24"
+            onkeydown="if(event.key==='Enter')addLate()" />
+          <button class="btn btn-gold" onclick="addLate()">Add</button>
+        </div>
+        <div class="skill-row">${lateSkillBtns}</div>
+        ${msgHtml}
+        <div class="mt8" style="text-align:right">
+          <button class="btn btn-sm btn-ghost" style="font-size:12px" onclick="lockEntries()">Close sign-ups</button>
+        </div>
+      </div>`;
+  }
+
+  const rounds = b.rounds.map((round, ri) => {
+    const heatCards = round.heats.map((heat, hi) => {
+      const rDone = heat.races.length;
+      const rNeed = b.racesPerHeat;
+      const np = heat.players.length;
+      const isOpen = ri === 0 && !heat.complete && rDone === 0 && np < 4 && !round0.complete && !b.entryLocked;
+      const raceable = np >= 2;
+
+      let status, statusKlass;
+      if (heat.complete)      { status = '✓ Done'; statusKlass = 'ok'; }
+      else if (rDone > 0)     { status = `Race ${rDone}/${rNeed}`; statusKlass = ''; }
+      else if (!raceable)     { status = `Waiting for more players`; statusKlass = 'open'; }
+      else if (isOpen)        { status = `${np} player${np !== 1 ? 's' : ''} · open`; statusKlass = 'open'; }
+      else                    { status = `${np} player${np !== 1 ? 's' : ''}`; statusKlass = ''; }
+
+      const chips = heat.players.map(p => {
+        const adv = heat.complete && heat.advancers.includes(p.id);
+        return `<span class="chip ${adv ? 'adv' : ''}">
+          <span class="chip-dot" style="background:${playerColor(p.colorIdx)}"></span>
+          ${esc(p.name)}
+        </span>`;
+      }).join('');
+
+      const clickable = !heat.complete && raceable;
+      const style = `style="${isOpen ? 'border-color:rgba(245,158,11,.35);' : ''}${clickable ? '' : 'cursor:default;'}"`;
+      return `<div class="heat-card ${heat.complete ? 'done no-click' : ''}" ${style}
+        ${clickable ? `onclick="openHeat(${ri},${hi})"` : ''}>
+        <div class="heat-top">
+          <span class="heat-name">${heat.name} <span style="font-weight:400;font-size:12px;color:var(--faint)">(${np}p)</span></span>
+          <span class="heat-status ${statusKlass}">${status}</span>
+        </div>
+        <div class="heat-chips">${chips}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="round-section">
+      <div class="round-label">${round.name}</div>
+      ${heatCards}
+    </div>`;
+  }).join('');
+
+  const futureNote = !b.complete
+    ? `<div class="info" style="text-align:center;margin:2px 0 18px">Later rounds appear automatically once the round before them finishes.</div>`
+    : '';
+
+  return `
+    <div class="gap"></div>
+    ${lateBody}
+    <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
+    <div class="row mb8">
+      <span class="info flex1">${totalRaces} / ${totalNeeded} races complete</span>
+      <button class="btn btn-sm btn-ghost btn-danger" onclick="resetTourney()">Reset</button>
+    </div>
+    ${rounds}
+    ${futureNote}
+    <div class="gap"></div>
+  `;
+}
+
+// ══════════════════════════════════════════════
+//  VIEW: HEAT RACING
+// ══════════════════════════════════════════════
+function vHeat(s) {
+  const { ri, hi } = s.activeHeat;
+  const round = s.bracket.rounds[ri];
+  const heat  = round.heats[hi];
+  const pts   = heatPts(heat);
+  const ranked = heatRanked(heat);
+  const need  = s.bracket.racesPerHeat;
+  const done  = heat.races.length;
+  const picks = s.picks || [];
+
+  // ── Heat complete screen ──
+  if (done >= need) {
+    const advs  = ranked.slice(0, 2);
+    const elim  = ranked.slice(2);
+    return `
+      <div class="gap"></div>
+      <div class="card" style="text-align:center">
+        <div class="complete-check">✅</div>
+        <div class="complete-title">${heat.name} finished</div>
+        <div class="complete-sub">${need} race${need > 1 ? 's' : ''} complete</div>
+        <div class="card-label" style="text-align:left">Advancing</div>
+        ${advs.map((p, i) => `
+          <div class="res-row">
+            <span class="res-pos">${['🥇', '🥈'][i]}</span>
+            <span class="prow-dot" style="background:${playerColor(p.colorIdx)};display:inline-block;width:9px;height:9px;border-radius:50%;flex-shrink:0"></span>
+            <span class="res-name">${esc(p.name)} ${skillBadge(p.skill)}</span>
+            <span class="res-pts">${pts[p.id]}pts</span>
+          </div>`).join('')}
+        ${elim.length ? `
+          <div class="card-label" style="text-align:left;margin-top:12px;opacity:.6">Eliminated</div>
+          ${elim.map(p => `
+            <div class="res-row" style="opacity:.45">
+              <span class="res-pos">💨</span>
+              <span class="res-name">${esc(p.name)}</span>
+              <span class="res-pts">${pts[p.id]}pts</span>
+            </div>`).join('')}` : ''}
+      </div>
+      <button class="btn btn-gold btn-block" onclick="finishHeat()">Back to bracket →</button>
+      <div class="gap"></div>
+    `;
+  }
+
+  // ── Active race entry ──
+  const remaining = heat.players.filter(p => !picks.includes(p.id));
+  const placed    = picks.map(id => heat.players.find(p => p.id === id)).filter(Boolean);
+
+  const pickBtns = remaining.map(p => `
+    <button class="pick-btn" onclick="makePick('${p.id}')">
+      <span class="prow-dot" style="background:${playerColor(p.colorIdx)};width:10px;height:10px"></span>
+      ${esc(p.name)} ${skillBadge(p.skill)}
+    </button>`).join('');
+
+  const placedRows = placed.map((p, rank) => `
+    <div class="res-row">
+      <span class="res-pos">${ORD[rank]}</span>
+      <span class="prow-dot" style="background:${playerColor(p.colorIdx)};display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+      <span class="res-name">${esc(p.name)}</span>
+      <span class="res-pts">+${PTS[rank]}</span>
+      <button class="res-undo" onclick="undoPick(${rank})">✕</button>
+    </div>`).join('');
+
+  const standRows = done > 0 ? ranked.map((p, rank) => `
+    <div class="res-row">
+      <span class="res-pos">${rank + 1}</span>
+      <span class="prow-dot" style="background:${playerColor(p.colorIdx)};display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+      <span class="res-name">${esc(p.name)} ${skillBadge(p.skill)}</span>
+      <span class="res-pts">${pts[p.id]}</span>
+      ${rank < 2 ? '<span class="adv-tag">↗ ADV</span>' : ''}
+    </div>`).join('') : '';
+
+  return `
+    <div class="gap"></div>
+    <div class="row mb8">
+      <button class="btn btn-sm btn-ghost" onclick="backToBracket()">← Bracket</button>
+      <span style="flex:1;font-size:14px;font-weight:600">${heat.name} — ${round.name}</span>
+      <span class="info">Race ${done + 1}/${need}</span>
+    </div>
+    <div class="pbar"><div class="pfill" style="width:${Math.round(done / need * 100)}%"></div></div>
+
+    ${remaining.length > 0 ? `
+      <div class="card">
+        <div class="card-label">Who finished ${ORD[placed.length]} in your group?</div>
+        ${pickBtns}
+      </div>` : ''}
+
+    ${placed.length > 0 ? `
+      <div class="card">
+        <div class="card-label">This race</div>
+        ${placedRows}
+      </div>` : ''}
+
+    ${done > 0 ? `
+      <div class="card">
+        <div class="card-label">Standings after ${done} race${done > 1 ? 's' : ''}</div>
+        ${standRows}
+      </div>
+      <button class="btn btn-sm btn-ghost btn-danger mb8" onclick="undoRace()">← Undo last race</button>
+    ` : ''}
+    <div class="gap"></div>
+  `;
+}
+
+// ══════════════════════════════════════════════
+//  VIEW: DONE
+// ══════════════════════════════════════════════
+function vDone(s) {
+  const b = s.bracket;
+  const finalHeat = b.rounds[b.rounds.length - 1].heats[0];
+  const pts    = heatPts(finalHeat);
+  const ranked = heatRanked(finalHeat);
+  const medals = ['🥇', '🥈', '🥉', '4th'];
+  const winName = b.players.find(p => p.id === b.winner)?.name || '?';
+
+  return `
+    <div class="gap"></div>
+    <div class="card" style="text-align:center;padding:28px 20px">
+      <div style="font-size:48px;margin-bottom:10px">🏆</div>
+      <div style="font-size:24px;font-weight:800;margin-bottom:4px">${esc(winName)}</div>
+      <div class="info">Tournament Champion</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Final standings</div>
+      ${ranked.map((p, i) => `
+        <div class="podium-row">
+          <span class="podium-medal">${medals[i] || (i + 1) + 'th'}</span>
+          <span class="prow-dot" style="background:${playerColor(p.colorIdx)};display:inline-block;width:10px;height:10px;border-radius:50%;flex-shrink:0"></span>
+          <span class="podium-name">${esc(p.name)} ${skillBadge(p.skill)}</span>
+          <span class="podium-pts">${pts[p.id]}pts</span>
+        </div>`).join('')}
+    </div>
+    <button class="btn btn-gold btn-block" onclick="newTourney()">New tournament</button>
+    <div class="gap"></div>
+  `;
+}
+
+// ══════════════════════════════════════════════
+//  VIEW: DISPLAY (second-screen live bracket)
+// ══════════════════════════════════════════════
+function vDisplay(s) {
+  // ── Header status text ──
+  let statusText = 'Setting up…';
+  if (s.phase === 'signup') {
+    statusText = `${s.players.length} player${s.players.length !== 1 ? 's' : ''} registered`;
+  } else if (s.phase === 'done' && s.bracket) {
+    const w = s.bracket.players.find(p => p.id === s.bracket.winner);
+    statusText = `🏆 ${esc(w?.name || '?')} wins!`;
+  } else if (s.bracket) {
+    const b = s.bracket;
+    if (s.phase === 'heat') {
+      const { ri, hi } = s.activeHeat;
+      statusText = `${b.rounds[ri].name} — ${b.rounds[ri].heats[hi].name} racing now`;
+    } else {
+      const ar = b.rounds.find(r => !r.complete);
+      if (ar) {
+        const done = ar.heats.filter(h => h.complete).length;
+        statusText = `${ar.name} — ${done} / ${ar.heats.length} heats done`;
+      }
+    }
+  }
+
+  const hdr = `
+    <div class="d-hdr">
+      <div class="d-hdr-title">🎮 MK World Tournament</div>
+      <div class="d-hdr-status">${statusText}</div>
+      <div class="d-live"><div class="d-live-dot"></div>Live</div>
+    </div>`;
+
+  // ── Signup / waiting ──
+  if (s.phase === 'signup' || !s.bracket) {
+    const chips = s.players.length
+      ? `<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:700px;margin-top:20px">
+          ${s.players.map(p => `<span class="chip"><span class="chip-dot" style="background:${playerColor(p.colorIdx)}"></span>${esc(p.name)} ${skillBadge(p.skill)}</span>`).join('')}
+        </div>` : '';
+    return hdr + `<div class="d-body"><div class="d-wait">
+      <div style="font-size:64px">🎮</div>
+      <div class="d-wait-title">Tournament Starting Soon</div>
+      <div class="d-wait-sub">See the organiser to sign up</div>
+      <div class="d-wait-n">${s.players.length} player${s.players.length !== 1 ? 's' : ''} registered</div>
+      ${chips}
+    </div></div>`;
+  }
+
+  // ── Done / winner ──
+  if (s.phase === 'done') {
+    const b = s.bracket;
+    const fh      = b.rounds[b.rounds.length - 1].heats[0];
+    const ranked  = heatRanked(fh);
+    const pts     = heatPts(fh);
+    const winner  = b.players.find(p => p.id === b.winner);
+    const medals  = ['🥇','🥈','🥉',''];
+    return hdr + `<div class="d-body"><div class="d-finish">
+      <span class="d-finish-trophy">🏆</span>
+      <div class="d-finish-name">${esc(winner?.name || '?')}</div>
+      <div class="d-finish-sub">Tournament Champion</div>
+      ${ranked.map((p, i) => `
+        <div class="d-finish-row">
+          <span class="d-finish-medal">${medals[i] || (i+1)+'th'}</span>
+          <span class="d-pdot" style="background:${playerColor(p.colorIdx)};display:inline-block;width:10px;height:10px;border-radius:50%;flex-shrink:0"></span>
+          <span class="d-finish-pn">${esc(p.name)} ${skillBadge(p.skill)}</span>
+          <span class="d-finish-pts">${pts[p.id]} pts</span>
+        </div>`).join('')}
+    </div></div>`;
+  }
+
+  // ── Bracket (main display) ──
+  // Rounds are only ever appended once they're actually ready to be
+  // raced, so there's nothing "locked" or "pending" left to render —
+  // every round/heat in this array genuinely exists right now.
+  const b = s.bracket;
+  const rounds = b.rounds.map((round, ri) => {
+    const cols = Math.min(4, round.heats.length);
+
+    const heats = round.heats.map((heat, hi) => {
+      const isActive = s.phase === 'heat'
+        && s.activeHeat?.ri === ri && s.activeHeat?.hi === hi;
+      const tagKlass = heat.complete ? 'tok' : isActive ? 'tac' : '';
+      const tagText  = heat.complete ? '✓ Done'
+        : isActive ? 'Racing now'
+        : heat.races.length > 0 ? `Race ${heat.races.length}/${b.racesPerHeat}`
+        : heat.players.length < 2 ? 'Waiting'
+        : `${heat.players.length}p`;
+      const heatKlass = heat.complete ? 'd-done' : isActive ? 'd-active' : '';
+
+      const players = heat.players.map(p => {
+        const adv = heat.complete && heat.advancers.includes(p.id);
+        const out = heat.complete && !adv;
+        return `<div class="d-pl ${adv ? 'adv' : ''} ${out ? 'out' : ''}">
+          <span class="d-pdot" style="background:${playerColor(p.colorIdx)}"></span>
+          <span class="d-pn">${esc(p.name)}</span>
+          ${adv ? '<span class="d-advarr">↗</span>' : ''}
+        </div>`;
+      }).join('');
+
+      return `<div class="d-heat ${heatKlass}">
+        <div class="d-heat-top">
+          <span class="d-hn">${heat.name}</span>
+          <span class="d-tag ${tagKlass}">${tagText}</span>
+        </div>
+        ${players}
+      </div>`;
+    }).join('');
+
+    return `<div class="d-round">
+      <div class="d-rlabel">${round.name}</div>
+      <div class="d-grid" style="--cols:${cols}">${heats}</div>
+    </div>`;
+  }).join('');
+
+  return hdr + `<div class="d-body">${rounds}</div>`;
+}
+
+// ══════════════════════════════════════════════
+//  ACTIONS
+// ══════════════════════════════════════════════
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function addPlayer() {
+  const inp  = document.getElementById('namein');
+  const name = inp?.value.trim();
+  if (!name) return;
+  const s = load();
+  if (s.players.length >= 32) { alert('Max 32 players.'); return; }
+  const colorIdx = s.nextColorIdx || 0;
+  s.players.push({ id: uid(), name, skill: s.newSkill, colorIdx });
+  s.nextColorIdx = colorIdx + 1;
+  save(s); render();
+  if (inp) { inp.value = ''; inp.focus(); }
+}
+
+function delPlayer(id) {
+  const s = load();
+  s.players = s.players.filter(p => p.id !== id);
+  save(s); render();
+}
+
+function clearAll() {
+  if (!confirm('Remove all players?')) return;
+  const s = load(); s.players = []; save(s); render();
+}
+
+function setSkill(sk) {
+  const s = load(); s.newSkill = sk; save(s); render();
+}
+
+function setRPH(n) {
+  const s = load(); s.racesPerHeat = n; save(s); render();
+}
+
+function setLateSkill(sk) {
+  const s = load(); s.lateSkill = sk; save(s); render();
+}
+
+function addLate() {
+  const inp  = document.getElementById('late-in');
+  const name = inp?.value.trim();
+  if (!name) return;
+  const s = load();
+
+  // Guards
+  if (!s.bracket || s.bracket.rounds[0].complete) {
+    s.lateMsg = { ok: false, text: 'Round 1 is already complete — sign-ups are closed.' };
+    save(s); render(); return;
+  }
+  if (s.bracket.entryLocked) {
+    s.lateMsg = { ok: false, text: 'Sign-ups are closed for this tournament.' };
+    save(s); render(); return;
+  }
+  if (s.bracket.players.length >= 32) {
+    s.lateMsg = { ok: false, text: 'Bracket is full — 32 players maximum.' };
+    save(s); render(); return;
+  }
+
+  const round0 = s.bracket.rounds[0];
+  const colorIdx = s.nextColorIdx || 0;
+  const newSeed  = s.bracket.players.length + 1;
+  const newPlayer = { id: uid(), name, skill: s.lateSkill || 'intermediate', seed: newSeed, colorIdx };
+  s.nextColorIdx = colorIdx + 1;
+  s.bracket.players.push(newPlayer);
+
+  // Fill the smallest heat that hasn't started racing yet. If every
+  // existing heat is either full or already underway, spin up a brand
+  // new one — this is what lets Round 1 keep growing past 8 players.
+  let target = round0.heats
+    .filter(h => h.races.length === 0 && h.players.length < 4)
+    .sort((a, b) => a.players.length - b.players.length)[0];
+
+  if (!target) {
+    target = { id: uid(), name: '', players: [], races: [], complete: false, advancers: [] };
+    round0.heats.push(target);
+  }
+  target.players.push(newPlayer);
+  relabelRound0(round0);
+
+  s.lateMsg = { ok: true, text: `${esc(name)} added to ${target.name} (now ${target.players.length} players).` };
+
+  save(s); render();
+  const ni = document.getElementById('late-in');
+  if (ni) { ni.value = ''; ni.focus(); }
+}
+
+function lockEntries() {
+  const s = load();
+  if (!s.bracket) return;
+  s.bracket.entryLocked = !s.bracket.entryLocked;
+  save(s); render();
+}
+
+function startTournament() {
+  const s = load();
+  if (s.players.length < 6 || s.players.length > 32) return;
+  s.bracket = startRound1(s.players, s.racesPerHeat);
+  s.phase = 'bracket';
+  s.activeHeat = null;
+  s.picks = [];
+  save(s); render();
+}
+
+function resetTourney() {
+  if (!confirm('Reset the tournament? All race results will be lost.')) return;
+  const s = load();
+  s.phase = 'signup'; s.bracket = null; s.activeHeat = null; s.picks = [];
+  save(s); render();
+}
+
+function openHeat(ri, hi) {
+  const s = load();
+  const heat = s.bracket.rounds[ri]?.heats[hi];
+  if (!heat || heat.complete || heat.players.length < 2) return;
+  s.activeHeat = { ri, hi };
+  s.picks = [];
+  s.lateMsg = null;
+  s.phase = 'heat';
+  save(s); render();
+}
+
+function backToBracket() {
+  const s = load();
+  s.phase = 'bracket'; s.activeHeat = null; s.picks = [];
+  save(s); render();
+}
+
+function makePick(pid) {
+  const s = load();
+  if ((s.picks || []).includes(pid)) return;
+  s.picks = [...(s.picks || []), pid];
+  const { ri, hi } = s.activeHeat;
+  const heat = s.bracket.rounds[ri].heats[hi];
+
+  if (s.picks.length === heat.players.length) {
+    heat.races.push([...s.picks]);
+    s.picks = [];
+  }
+  save(s); render();
+}
+
+function undoPick(rank) {
+  const s = load();
+  s.picks = (s.picks || []).slice(0, rank);
+  save(s); render();
+}
+
+function undoRace() {
+  const s = load();
+  const { ri, hi } = s.activeHeat;
+  const heat = s.bracket.rounds[ri].heats[hi];
+  if (heat.races.length > 0) { heat.races.pop(); s.picks = []; }
+  save(s); render();
+}
+
+function finishHeat() {
+  const s = load();
+  const { ri, hi } = s.activeHeat;
+  s.bracket = closeHeat(s.bracket, ri, hi);
+  s.phase = s.bracket.complete ? 'done' : 'bracket';
+  s.activeHeat = null; s.picks = [];
+  save(s); render();
+}
+
+function newTourney() {
+  if (!confirm('Start a new tournament? This will erase all current data.')) return;
+  localStorage.removeItem(SK);
+  render();
+}
+
+function openDisplay() {
+  const base = window.location.href.split('#')[0];
+  window.open(base + '#display', 'mk-display', 'width=1280,height=800,menubar=no,toolbar=no,scrollbars=yes');
+}
+
+// ══════════════════════════════════════════════
+//  BOOT + LIVE SYNC
+// ══════════════════════════════════════════════
+// When the control window writes localStorage, the display window hears it instantly.
+window.addEventListener('storage', e => { if (e.key === SK) render(); });
+// Fallback poll every 2 s (covers the same-tab edge case).
+setInterval(() => { if (window.location.hash === '#display') render(); }, 2000);
+render();
+</script>
+</body>
+</html>
